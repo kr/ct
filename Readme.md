@@ -5,7 +5,7 @@
 ## How to use
 
 1. Copy subdirectory `ct` into your project.
-2. Add some rules to your makefile. (See `Makefile` for an example.)
+2. Add some rules to your makefile. (See [Makefile][] for an example.)
 3. Run `make check`
 
 ## Releases
@@ -19,3 +19,4 @@ into your project.
 This is derived from [CUT][] by Billy Tanksley and Sam Falvo.
 
 [CUT]: http://falvotech.com/content/cut/
+[Makefile]: https://github.com/kr/ct/blob/master/Makefile
