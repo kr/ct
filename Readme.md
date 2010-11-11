@@ -13,3 +13,9 @@
 There will be no releases of this tool. Just clone the latest source from git
 and copy it into your project. If you want to update, copy the newer source
 into your project.
+
+## History
+
+This is derived from [CUT][] by Billy Tanksley and Sam Falvo.
+
+[CUT]: http://falvotech.com/content/cut/
