@@ -1,11 +1,8 @@
 #include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
 #include "msg.h"
 #include "ct/ct.h"
-
-void
-ct_setup_pq()
-{
-}
 
 void
 ct_test_set_message()
@@ -26,7 +23,21 @@ ct_test_default_message()
     ASSERT(strcmp("default message", m) == 0, "message does not match");
 }
 
+
 void
-ct_teardown_pq()
+ct_test_failure()
 {
+    ASSERT(0, "bah");
+}
+
+void
+ct_test_segfault()
+{
+    *(int*)0 = 0;
+}
+
+void
+ct_test_exit()
+{
+    exit(2);
 }
