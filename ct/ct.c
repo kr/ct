@@ -1,8 +1,5 @@
 /* CT - (Relatively) Easy Unit Testing for C */
 
-/* Inspired by CUT 2.1 by Sam Falvo and Billy Tanksley. */
-/* Also with ideas from the Go testing package. */
-
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>

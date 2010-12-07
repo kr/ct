@@ -20,8 +20,11 @@ into your project.
 
 ## History
 
-This is derived from [CUT][] by Billy Tanksley and Sam Falvo.
+Inspired by [CUT][] 2.1 by Sam Falvo and Billy Tanksley.
+Also with ideas from the [Go testing package][gotesting] and [gotest][].
 
 [CUT]: http://falvotech.com/content/cut/
 [Makefile]: https://github.com/kr/ct/blob/master/Makefile
 [msg_test.c]: https://github.com/kr/ct/blob/master/msg_test.c
+[gotesting]: http://golang.org/pkg/testing/
+[gotest]: http://golang.org/cmd/gotest/
