@@ -2,8 +2,9 @@ CFLAGS ?= -Werror -Wall
 
 libs = msg.c
 objs = $(libs:.c=.o)
-testcs = $(wildcard *_test.c)
-tests = $(testcs:.c=.o)
+
+tests = $(wildcard *_test.c)
+tobjs = $(tests:.c=.o)
 
 all: hello
 
@@ -13,10 +14,10 @@ hello: hello.o $(objs)
 check: ct/_ctcheck
 	ct/_ctcheck
 
-ct/_ctcheck: ct/_ctcheck.o ct/ct.o $(objs) $(tests)
+ct/_ctcheck: ct/_ctcheck.o ct/ct.o $(objs) $(tobjs)
 
-ct/_ctcheck.c: $(tests) ct/gen
-	ct/gen $(tests) > $@.part
+ct/_ctcheck.c: $(tobjs) ct/gen
+	ct/gen $(tobjs) > $@.part
 	mv $@.part $@
 
 .PHONY: clean
