@@ -33,7 +33,7 @@ failed(int s)
 }
 
 void
-ct_exit(T ts[], int n)
+ct_report(T ts[], int n)
 {
     int i, r, s;
     char buf[1024]; // arbitrary size

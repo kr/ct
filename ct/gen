@@ -33,7 +33,7 @@ gen() {
         i=`expr $i + 1`
     done
 
-    printf '    ct_exit(ts, %d);\n' $i
+    printf '    ct_report(ts, %d);\n' $i
     printf '    return 0;\n'
     printf '}\n'
 }
