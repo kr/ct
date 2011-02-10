@@ -11,18 +11,17 @@
 #include "internal.h"
 
 static void
-die(int code, const char *fmt, ...)
+die(int code, const char *msg)
 {
-    va_list v;
-
     putc('\n', stderr);
 
-    va_start(v, fmt);
-    vfprintf(stderr, fmt, v);
-    va_end(v);
+    if (msg && *msg) {
+        fputs(msg, stderr);
+        fputs(": ", stderr);
+    }
 
-    if (fmt && *fmt) fputs(": ", stderr);
-    fprintf(stderr, "%s\n", strerror(errno));
+    fputs(strerror(errno), stderr);
+    putc('\n', stderr);
     exit(code);
 }
 
@@ -67,7 +66,7 @@ ct_report(T ts[], int n)
     }
 
     printf("\n%d tests; %d failures; %d errors.\n", n, cf, ce);
-    exit(!!(cf + ce));
+    exit(cf || ce);
 }
 
 void
