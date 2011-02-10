@@ -83,7 +83,7 @@ void
 ct_run(T *t, int i, ct_fn f, const char *name)
 {
     pid_t pid;
-    int status, r, ofd;
+    int status, r;
     char c;
     FILE *out;
 
@@ -91,7 +91,7 @@ ct_run(T *t, int i, ct_fn f, const char *name)
 
     out = tmpfile();
     if (!out) die(1, "tmpfile");
-    ofd = fileno(out);
+    t->fd = fileno(out);
 
     fflush(stdout);
     fflush(stderr);
@@ -100,10 +100,10 @@ ct_run(T *t, int i, ct_fn f, const char *name)
     if (pid < 0) {
         die(1, "fork");
     } else if (!pid) {
-        r = dup2(ofd, 1); // send stdout to tmpfile
+        r = dup2(t->fd, 1); // send stdout to tmpfile
         if (r == -1) die(3, "dup2");
 
-        r = close(ofd);
+        r = close(t->fd);
         if (r == -1) die(3, "fclose");
 
         r = dup2(1, 2); // send stderr to stdout
@@ -120,14 +120,14 @@ ct_run(T *t, int i, ct_fn f, const char *name)
     if (!status) {
         // Since we won't need the (potentially large) output,
         // free its disk space immediately.
-        close(ofd);
+        close(t->fd);
+        t->fd = -1;
         c = '.';
     } else if (failed(status)) {
         c = 'F';
     } else {
         c = 'E';
     }
-    t->fd = ofd;
 
     if (i % 10 == 0) {
         if (i % 50 == 0) {
