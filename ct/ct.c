@@ -11,7 +11,7 @@
 #include "internal.h"
 
 static void
-die(int code, const char *msg)
+die(int code, int err, const char *msg)
 {
     putc('\n', stderr);
 
@@ -20,7 +20,7 @@ die(int code, const char *msg)
         fputs(": ", stderr);
     }
 
-    fputs(strerror(errno), stderr);
+    fputs(strerror(err), stderr);
     putc('\n', stderr);
     exit(code);
 }
@@ -61,7 +61,7 @@ ct_report(T ts[], int n)
         lseek(ts[i].fd, 0, SEEK_SET);
         while ((r = read(ts[i].fd, buf, sizeof(buf)))) {
             s = fwrite(buf, 1, r, stdout);
-            if (r != s) die(3, "fwrite");
+            if (r != s) die(3, errno, "fwrite");
         }
     }
 
@@ -95,7 +95,7 @@ ct_run(T *t, int i, void (*f)(), const char *name)
     t->name = name;
 
     out = tmpfile();
-    if (!out) die(1, "tmpfile");
+    if (!out) die(1, errno, "tmpfile");
     t->fd = fileno(out);
 
     fflush(stdout);
@@ -103,23 +103,23 @@ ct_run(T *t, int i, void (*f)(), const char *name)
 
     pid = fork();
     if (pid < 0) {
-        die(1, "fork");
+        die(1, errno, "fork");
     } else if (!pid) {
         r = dup2(t->fd, 1); // send stdout to tmpfile
-        if (r == -1) die(3, "dup2");
+        if (r == -1) die(3, errno, "dup2");
 
         r = close(t->fd);
-        if (r == -1) die(3, "fclose");
+        if (r == -1) die(3, errno, "fclose");
 
         r = dup2(1, 2); // send stderr to stdout
-        if (r < 0) die(3, "dup2");
+        if (r < 0) die(3, errno, "dup2");
 
         f();
         exit(0);
     }
 
     r = waitpid(pid, &t->status, 0);
-    if (r != pid) die(3, "wait");
+    if (r != pid) die(3, errno, "wait");
 
     if (!t->status) {
         putchar('.');
