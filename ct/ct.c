@@ -79,7 +79,7 @@ ct_fail_(char *file, int line, char *exp, char *msg)
 }
 
 void
-ct_run(T *t, int i, ct_fn f, const char *name)
+ct_run(T *t, int i, void (*f)(), const char *name)
 {
     pid_t pid;
     int status, r;
