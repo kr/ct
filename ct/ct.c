@@ -122,10 +122,6 @@ ct_run(T *t, int i, void (*f)(), const char *name)
     if (r != pid) die(3, "wait");
 
     if (!t->status) {
-        // Since we won't need the (potentially large) output,
-        // free its disk space immediately.
-        close(t->fd);
-        t->fd = -1;
         putchar('.');
     } else if (failed(t->status)) {
         putchar('F');
