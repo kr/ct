@@ -82,7 +82,7 @@ void
 ct_run(T *t, int i, void (*f)(), const char *name)
 {
     pid_t pid;
-    int status, r;
+    int r;
     FILE *out;
 
     if (i % 10 == 0) {
@@ -118,17 +118,16 @@ ct_run(T *t, int i, void (*f)(), const char *name)
         exit(0);
     }
 
-    r = waitpid(pid, &status, 0);
+    r = waitpid(pid, &t->status, 0);
     if (r != pid) die(3, "wait");
 
-    t->status = status;
-    if (!status) {
+    if (!t->status) {
         // Since we won't need the (potentially large) output,
         // free its disk space immediately.
         close(t->fd);
         t->fd = -1;
         putchar('.');
-    } else if (failed(status)) {
+    } else if (failed(t->status)) {
         putchar('F');
     } else {
         putchar('E');
