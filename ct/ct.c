@@ -75,14 +75,14 @@ ct_fail_(char *file, int line, char *exp, char *msg)
   printf("  %s:%d: (%s) %s\n", file, line, exp, msg);
   fflush(stdout);
   fflush(stderr);
-  exit(-1);
+  abort();
 }
 
 
 static int
 failed(int s)
 {
-    return WIFEXITED(s) && (WEXITSTATUS(s) == 255);
+    return WIFSIGNALED(s) && (WTERMSIG(s) == SIGABRT);
 }
 
 
