@@ -83,8 +83,14 @@ ct_run(T *t, int i, ct_fn f, const char *name)
 {
     pid_t pid;
     int status, r;
-    char c;
     FILE *out;
+
+    if (i % 10 == 0) {
+        if (i % 50 == 0) {
+            putchar('\n');
+        }
+        printf("%5d", i);
+    }
 
     t->name = name;
 
@@ -121,20 +127,12 @@ ct_run(T *t, int i, ct_fn f, const char *name)
         // free its disk space immediately.
         close(t->fd);
         t->fd = -1;
-        c = '.';
+        putchar('.');
     } else if (failed(status)) {
-        c = 'F';
+        putchar('F');
     } else {
-        c = 'E';
+        putchar('E');
     }
 
-    if (i % 10 == 0) {
-        if (i % 50 == 0) {
-            putchar('\n');
-        }
-        printf("%5d", i);
-    }
-
-    putchar(c);
     fflush(stdout);
 }
