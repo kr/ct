@@ -10,73 +10,9 @@
 #include <errno.h>
 #include "internal.h"
 
-static void
-die(int code, int err, const char *msg)
-{
-    putc('\n', stderr);
+static void die(int code, int err, const char *msg);
+static int  failed(int s);
 
-    if (msg && *msg) {
-        fputs(msg, stderr);
-        fputs(": ", stderr);
-    }
-
-    fputs(strerror(err), stderr);
-    putc('\n', stderr);
-    exit(code);
-}
-
-static int
-failed(int s)
-{
-    return WIFEXITED(s) && (WEXITSTATUS(s) == 255);
-}
-
-void
-ct_report(T ts[], int n)
-{
-    int i, r, s;
-    char buf[1024]; // arbitrary size
-    int cf = 0, ce = 0;
-
-    putchar('\n');
-    for (i = 0; i < n; i++) {
-        if (!ts[i].status) continue;
-
-        printf("\n%s: ", ts[i].name);
-        if (failed(ts[i].status)) {
-            cf++;
-            printf("failure");
-        } else {
-            ce++;
-            printf("error");
-            if (WIFEXITED(ts[i].status)) {
-                printf(" (exit status %d)", WEXITSTATUS(ts[i].status));
-            }
-            if (WIFSIGNALED(ts[i].status)) {
-                printf(" (signal %d)", WTERMSIG(ts[i].status));
-            }
-        }
-
-        putchar('\n');
-        lseek(ts[i].fd, 0, SEEK_SET);
-        while ((r = read(ts[i].fd, buf, sizeof(buf)))) {
-            s = fwrite(buf, 1, r, stdout);
-            if (r != s) die(3, errno, "fwrite");
-        }
-    }
-
-    printf("\n%d tests; %d failures; %d errors.\n", n, cf, ce);
-    exit(cf || ce);
-}
-
-void
-ct_fail_(char *file, int line, char *exp, char *msg)
-{
-  printf("  %s:%d: (%s) %s\n", file, line, exp, msg);
-  fflush(stdout);
-  fflush(stderr);
-  exit(-1);
-}
 
 void
 ct_run(T *t, int i, void (*f)(), const char *name)
@@ -130,4 +66,76 @@ ct_run(T *t, int i, void (*f)(), const char *name)
     }
 
     fflush(stdout);
+}
+
+
+void
+ct_fail_(char *file, int line, char *exp, char *msg)
+{
+  printf("  %s:%d: (%s) %s\n", file, line, exp, msg);
+  fflush(stdout);
+  fflush(stderr);
+  exit(-1);
+}
+
+
+static int
+failed(int s)
+{
+    return WIFEXITED(s) && (WEXITSTATUS(s) == 255);
+}
+
+
+void
+ct_report(T ts[], int n)
+{
+    int i, r, s;
+    char buf[1024]; // arbitrary size
+    int cf = 0, ce = 0;
+
+    putchar('\n');
+    for (i = 0; i < n; i++) {
+        if (!ts[i].status) continue;
+
+        printf("\n%s: ", ts[i].name);
+        if (failed(ts[i].status)) {
+            cf++;
+            printf("failure");
+        } else {
+            ce++;
+            printf("error");
+            if (WIFEXITED(ts[i].status)) {
+                printf(" (exit status %d)", WEXITSTATUS(ts[i].status));
+            }
+            if (WIFSIGNALED(ts[i].status)) {
+                printf(" (signal %d)", WTERMSIG(ts[i].status));
+            }
+        }
+
+        putchar('\n');
+        lseek(ts[i].fd, 0, SEEK_SET);
+        while ((r = read(ts[i].fd, buf, sizeof(buf)))) {
+            s = fwrite(buf, 1, r, stdout);
+            if (r != s) die(3, errno, "fwrite");
+        }
+    }
+
+    printf("\n%d tests; %d failures; %d errors.\n", n, cf, ce);
+    exit(cf || ce);
+}
+
+
+static void
+die(int code, int err, const char *msg)
+{
+    putc('\n', stderr);
+
+    if (msg && *msg) {
+        fputs(msg, stderr);
+        fputs(": ", stderr);
+    }
+
+    fputs(strerror(err), stderr);
+    putc('\n', stderr);
+    exit(code);
 }
