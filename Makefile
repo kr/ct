@@ -3,7 +3,7 @@ CFLAGS ?= -Werror -Wall
 libs = msg.c
 objs = $(libs:.c=.o)
 
-tests = $(wildcard *_test.c)
+tests = $(wildcard *-test.c)
 tobjs = $(tests:.c=.o)
 
 all: hello
