@@ -9,7 +9,7 @@ tests() {
     done | cut -d ' ' -f 3 | egrep '^ct_test_'
 }
 
-ts=`tests "$@"`
+ts=`tests "$@" || (echo >&2 no tests found; exit 1)`
 
 gen() {
     printf '#include "internal.h"\n'
