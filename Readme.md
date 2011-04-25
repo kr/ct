@@ -6,7 +6,7 @@
 
 1. Copy subdirectory `ct` into your project.
 2. Add some rules to your makefile. See [Makefile][] for an example.
-3. Write some tests. See [msg_test.c][] for an example.
+3. Write some tests. See [msg-test.c][] for an example.
    Test functions are those whose names begin with "cttest".
    The test runner forks before each test, so global state
    from one test will not affect another.
@@ -25,6 +25,6 @@ Also with ideas from the [Go testing package][gotesting] and [gotest][].
 
 [CUT]: http://falvotech.com/content/cut/
 [Makefile]: https://github.com/kr/ct/blob/master/Makefile
-[msg_test.c]: https://github.com/kr/ct/blob/master/msg_test.c
+[msg-test.c]: https://github.com/kr/ct/blob/master/msg-test.c
 [gotesting]: http://golang.org/pkg/testing/
 [gotest]: http://golang.org/cmd/gotest/
