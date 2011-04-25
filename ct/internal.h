@@ -8,4 +8,4 @@ struct T {
 
 
 void ctreport(T ts[], int n);
-void ctrun(T *t, int i, void(*f)(), const char *name);
+void ctrun(T *t, int i, void(*f)(void), const char *name);

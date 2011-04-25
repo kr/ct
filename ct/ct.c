@@ -15,7 +15,7 @@ static int  failed(int s);
 
 
 void
-ctrun(T *t, int i, void (*f)(), const char *name)
+ctrun(T *t, int i, void (*f)(void), const char *name)
 {
     pid_t pid;
     int r;
