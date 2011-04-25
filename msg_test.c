@@ -11,7 +11,7 @@ cttestset()
 
     set_message("foo");
     m = get_message();
-    ASSERT(strcmp("foo", m) == 0, "message does not match");
+    assert(strcmp("foo", m) == 0);
 }
 
 void
@@ -20,14 +20,21 @@ cttestdefault()
     char *m;
 
     m = get_message();
-    ASSERT(strcmp("default message", m) == 0, "message does not match");
+    assert(strcmp("default message", m) == 0);
 }
 
 
 void
 cttestfailure()
 {
-    ASSERT(0, "bah");
+    assert(1 == 2);
+}
+
+void
+cttestfmt()
+{
+    int n = 1;
+    assertf(n == 2, "n is %d", n);
 }
 
 void

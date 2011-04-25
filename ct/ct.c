@@ -70,9 +70,20 @@ ctrun(T *t, int i, void (*f)(), const char *name)
 
 
 void
-ctfail_(char *file, int line, char *exp, char *msg)
+ctlogpn(char *p, int n, char *fmt, ...)
 {
-  printf("  %s:%d: (%s) %s\n", file, line, exp, msg);
+  va_list arg;
+
+  printf("%s:%d: ", p, n);
+  va_start(arg, fmt);
+  vprintf(fmt, arg);
+  va_end(arg);
+  putchar('\n');
+}
+
+void
+ctfail(void)
+{
   fflush(stdout);
   fflush(stderr);
   abort();
