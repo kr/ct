@@ -14,6 +14,10 @@ hello: hello.o $(objs)
 check: ct/_ctcheck
 	ct/_ctcheck
 
+ct/ct.o: ct/ct.h
+
+$(tobjs): ct/ct.h
+
 ct/_ctcheck: ct/_ctcheck.o ct/ct.o $(objs) $(tobjs)
 
 ct/_ctcheck.c: $(tobjs) ct/gen
