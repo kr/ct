@@ -7,5 +7,5 @@ struct T {
 };
 
 
-void ct_report(T ts[], int n);
-void ct_run(T *t, int i, void(*f)(), const char *name);
+void ctreport(T ts[], int n);
+void ctrun(T *t, int i, void(*f)(), const char *name);

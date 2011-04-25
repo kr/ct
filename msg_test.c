@@ -5,7 +5,7 @@
 #include "ct/ct.h"
 
 void
-ct_test_set_message()
+cttestset()
 {
     char *m;
 
@@ -15,7 +15,7 @@ ct_test_set_message()
 }
 
 void
-ct_test_default_message()
+cttestdefault()
 {
     char *m;
 
@@ -25,19 +25,19 @@ ct_test_default_message()
 
 
 void
-ct_test_failure()
+cttestfailure()
 {
     ASSERT(0, "bah");
 }
 
 void
-ct_test_segfault()
+cttestsegfault()
 {
     *(int*)0 = 0;
 }
 
 void
-ct_test_exit()
+cttestexit()
 {
     exit(2);
 }

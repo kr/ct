@@ -6,7 +6,7 @@ tests() {
     for f in "$@"
     do
         nm $f
-    done | cut -d ' ' -f 3 | egrep '^ct_test_'
+    done | cut -d ' ' -f 3 | egrep '^cttest'
 }
 
 ts=`tests "$@" || (echo >&2 no tests found; exit 1)`
@@ -29,11 +29,11 @@ gen() {
     i=0
     for t in "$@"
     do
-        printf '    ct_run(&ts[%d], %d, %s, "%s");\n' $i $i $t $t
+        printf '    ctrun(&ts[%d], %d, %s, "%s");\n' $i $i $t $t
         i=`expr $i + 1`
     done
 
-    printf '    ct_report(ts, %d);\n' $i
+    printf '    ctreport(ts, %d);\n' $i
     printf '    return 0;\n'
     printf '}\n'
 }

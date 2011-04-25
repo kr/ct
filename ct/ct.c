@@ -15,7 +15,7 @@ static int  failed(int s);
 
 
 void
-ct_run(T *t, int i, void (*f)(), const char *name)
+ctrun(T *t, int i, void (*f)(), const char *name)
 {
     pid_t pid;
     int r;
@@ -70,7 +70,7 @@ ct_run(T *t, int i, void (*f)(), const char *name)
 
 
 void
-ct_fail_(char *file, int line, char *exp, char *msg)
+ctfail_(char *file, int line, char *exp, char *msg)
 {
   printf("  %s:%d: (%s) %s\n", file, line, exp, msg);
   fflush(stdout);
@@ -87,7 +87,7 @@ failed(int s)
 
 
 void
-ct_report(T ts[], int n)
+ctreport(T ts[], int n)
 {
     int i, r, s;
     char buf[1024]; // arbitrary size
