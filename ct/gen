@@ -11,9 +11,8 @@ fixsyms() {
 
 tests() {
     for f in "$@"
-    do
-        nm $f
-    done | cut -d ' ' -f 3 | fixsyms | egrep '^cttest'
+    do nm $f
+    done | cut -d ' ' -f 3 | fixsyms | egrep ^cttest
 }
 
 ts=`tests "$@" || (echo >&2 no tests found; exit 1)`
@@ -45,6 +44,4 @@ gen() {
     printf '}\n'
 }
 
-gen $ts #> _test.c
-#rm -f _test.o
-#cc -o _test.o _test.c
+gen $ts
