@@ -156,7 +156,7 @@ report(T t[])
 
 
 int
-main(int argc, char *argv[])
+main(void)
 {
     run(ctmain);
     return report(ctmain);
