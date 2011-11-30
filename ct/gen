@@ -15,16 +15,32 @@ tests() {
     done | cut -d ' ' -f 3 | fixsyms | egrep ^cttest
 }
 
+
+
+### need to change these to make sure there's only one match
+setup() {
+    for f in "$@"
+    do nm $f
+    done | cut -d ' ' -f 3 | fixsyms | egrep ^ctsetup
+}
+teardown() {
+    for f in "$@"
+    do nm $f
+    done | cut -d ' ' -f 3 | fixsyms | egrep ^ctteardown
+}
+
 gen() {
     printf '#include "internal.h"\n'
     printf '#include <stdlib.h>\n'
     printf '\n'
 
+    #put setup, teardown in here too
     for t in "$@"
     do printf 'void %s(void);\n' $t
     done
     printf '\n'
 
+    #put setup, teardown pointers in the array entry for each function
     printf 'T ctmain[] = {\n'
     for t in "$@"
     do printf '    {%s, "%s", -1, -1, NULL, NULL},\n' $t $t
