@@ -27,9 +27,9 @@ gen() {
 
     printf 'T ctmain[] = {\n'
     for t in "$@"
-    do printf '    {%s, "%s", -1, -1},\n' $t $t
+    do printf '    {%s, "%s", -1, -1, NULL, NULL},\n' $t $t
     done
-    printf '    {NULL, NULL, -1, -1},\n'
+    printf '    {NULL, NULL, -1, -1, NULL, NULL},\n'
     printf '};\n'
 }
 

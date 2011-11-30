@@ -5,6 +5,8 @@ struct T {
     char *name;
     int  status;
     int  fd;
+    void (*setup)(void);
+    void (*teardown)(void);
 };
 
 extern T ctmain[];
