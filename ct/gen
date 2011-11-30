@@ -9,17 +9,14 @@ fixsyms() {
     fi
 }
 
-
 renametests() {
-    for f in "$@"
-    do 
-        ff=`echo $f | sed s/[^a-zA-Z0-9_]/_/g` >&2
-        for n in `nm $f | cut -d ' ' -f 3 | fixsyms | egrep ^cttest`
-        do
-            objcopy --redefine-sym $n=$n"_"$ff $f
-        done
-        nm $f | cut -d ' ' -f 3 | fixsyms | egrep ^cttest
+    f=$1
+    ff=`echo $f | sed s/[^a-zA-Z0-9_]/_/g`
+    for n in `nm $f | cut -d ' ' -f 3 | fixsyms | egrep ^cttest`
+    do
+        objcopy --redefine-sym $n=$n"_"$ff $f
     done
+    nm $f | cut -d ' ' -f 3 | fixsyms | egrep ^cttest
 }
 
 tests() {
@@ -27,8 +24,6 @@ tests() {
     do nm $f | cut -d ' ' -f 3 | fixsyms | egrep ^cttest
     done
 }
-
-
 
 ### need to change these to make sure there's only one match
 setup() {
@@ -47,19 +42,24 @@ gen() {
     printf '#include <stdlib.h>\n'
     printf '\n'
 
-    #put setup, teardown in here too
-    for t in "$@"
-    do printf 'void %s(void);\n' $t
-    done
-    printf '\n'
+    Tarray=""
 
-    #put setup, teardown pointers in the array entry for each function
-    printf 'T ctmain[] = {\n'
-    for t in "$@"
-    do printf '    {%s, "%s", -1, -1, NULL, NULL},\n' $t $t
+    for f in "$@"
+    do
+        funcs=`renametests $f`
+        for t in $funcs
+        do 
+            printf 'void %s(void);\n' $t
+            temp="`printf  '    {%s, "%s", -1, -1, NULL, NULL},' $t $t`"
+            Tarray=$Tarray''$temp'\n'
+        done
+        printf '\n'
     done
+
+    printf 'T ctmain[] = {\n'
+    printf "$Tarray"
     printf '    {NULL, NULL, -1, -1, NULL, NULL},\n'
     printf '};\n'
 }
 
-gen `renametests "$@" || (echo >&2 no tests found; exit 1)`
+gen "$@"  #`temp "$@" || (echo >&2 no tests found; exit 1)`
