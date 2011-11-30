@@ -9,10 +9,23 @@ fixsyms() {
     fi
 }
 
+
+renametests() {
+    for f in "$@"
+    do 
+        ff=`echo $f | sed s/[^a-zA-Z0-9_]/_/g` >&2
+        for n in `nm $f | cut -d ' ' -f 3 | fixsyms | egrep ^cttest`
+        do
+            objcopy --redefine-sym $n=$n"_"$ff $f
+        done
+        nm $f | cut -d ' ' -f 3 | fixsyms | egrep ^cttest
+    done
+}
+
 tests() {
     for f in "$@"
-    do nm $f
-    done | cut -d ' ' -f 3 | fixsyms | egrep ^cttest
+    do nm $f | cut -d ' ' -f 3 | fixsyms | egrep ^cttest
+    done
 }
 
 
@@ -21,12 +34,12 @@ tests() {
 setup() {
     for f in "$@"
     do nm $f
-    done | cut -d ' ' -f 3 | fixsyms | egrep ^ctsetup
+    done | cut -d ' ' -f 3 | fixsyms | egrep ^ctsetup$
 }
 teardown() {
     for f in "$@"
     do nm $f
-    done | cut -d ' ' -f 3 | fixsyms | egrep ^ctteardown
+    done | cut -d ' ' -f 3 | fixsyms | egrep ^ctteardown$
 }
 
 gen() {
@@ -49,4 +62,4 @@ gen() {
     printf '};\n'
 }
 
-gen `tests "$@" || (echo >&2 no tests found; exit 1)`
+gen `renametests "$@" || (echo >&2 no tests found; exit 1)`
