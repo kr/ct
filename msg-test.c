@@ -4,6 +4,15 @@
 #include "msg.h"
 #include "ct/ct.h"
 
+void ctsetup(){
+    fprintf(stderr, "hi!");
+}
+
+void ctteardown(){
+    printf("bye");
+    assert(1==2);
+}
+
 void
 cttestset()
 {

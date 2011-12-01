@@ -25,18 +25,34 @@ tests() {
     done
 }
 
-### need to change these to make sure there's only one match
-setup() {
-    for f in "$@"
-    do nm $f
-    done | cut -d ' ' -f 3 | fixsyms | egrep ^ctsetup$
-}
-teardown() {
-    for f in "$@"
-    do nm $f
-    done | cut -d ' ' -f 3 | fixsyms | egrep ^ctteardown$
-}
+renamesetup() {
+    f=$1
+    ff=`echo $f | sed s/[^a-zA-Z0-9_]/_/g`
+    for n in `nm $f | cut -d ' ' -f 3 | fixsyms | egrep ^ctsetup$`
+    do
+        objcopy --redefine-sym $n=$n"_"$ff $f
+    done
 
+    if [ -z `nm $f | cut -d ' ' -f 3 | fixsyms | egrep ^ctsetup_$ff$` ]; then
+        echo "NULL"
+    else
+        echo "ctsetup_"$ff
+    fi
+}
+renameteardown() {
+    f=$1
+    ff=`echo $f | sed s/[^a-zA-Z0-9_]/_/g`
+    for n in `nm $f | cut -d ' ' -f 3 | fixsyms | egrep ^ctteardown$`
+    do
+        objcopy --redefine-sym $n=$n"_"$ff $f
+    done
+
+    if [ -z `nm $f | cut -d ' ' -f 3 | fixsyms | egrep ^ctteardown_$ff$` ]; then
+        echo "NULL"
+    else
+        echo "ctteardown_"$ff
+    fi
+}
 gen() {
     printf '#include "internal.h"\n'
     printf '#include <stdlib.h>\n'
@@ -46,11 +62,22 @@ gen() {
 
     for f in "$@"
     do
+        setup=`renamesetup $f`
+        teardown=`renameteardown $f`
         funcs=`renametests $f`
+        if [ "$setup" != "NULL" ]; then
+            echo $setup >&2
+            printf 'void %s(void);\n' $setup
+        fi
+
+        if [ "$teardown" != "NULL" ]; then
+            printf 'void %s(void);\n' $teardown
+        fi
+
         for t in $funcs
         do 
             printf 'void %s(void);\n' $t
-            temp="`printf  '    {%s, "%s", -1, -1, NULL, NULL},' $t $t`"
+            temp="`printf  '    {%s, "%s", -1, -1, %s, %s},' $t $t $setup $teardown`"
             Tarray=$Tarray''$temp'\n'
         done
         printf '\n'
