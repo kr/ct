@@ -9,8 +9,7 @@ void ctsetup(){
 }
 
 void ctteardown(){
-    printf("bye");
-    assert(1==2);
+    fprintf(stderr, "bye");
 }
 
 void
