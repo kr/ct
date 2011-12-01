@@ -5,11 +5,11 @@
 #include "ct/ct.h"
 
 void ctsetup(){
-    fprintf(stderr, "hi!");
+    fprintf(stderr, "hi!\n");
 }
 
 void ctteardown(){
-    fprintf(stderr, "bye");
+    fprintf(stderr, "bye\n");
 }
 
 void
