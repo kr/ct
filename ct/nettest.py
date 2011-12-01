@@ -30,7 +30,7 @@ for f in files:
   for i in range(1,l-1):
     newName = newName +  "/" + newPieces[i]
   piecesOfPieces = newPieces[l-1].split('-')
-  newName = newName + "/" + piecesOfPieces[0] + "-test.c"
+  newName = newName + "/_net_" + piecesOfPieces[0] + "-test.c"
 
   newF = open(newName, 'w')
   oldF = open(f,'r')
@@ -129,6 +129,7 @@ for f in files:
     line = "void cttest_"+thing+"(void) {\n"
     newF.write(line)
     newF.write("\trunSocketTests(connections);\n}");
+    newF.write("\n\n")
   
   newF.close()
   oldF.close()
