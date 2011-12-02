@@ -1,0 +1,39 @@
+#include "udp_protocol.h"
+
+#include <stdlib.h>
+#include "ct.h"
+
+struct ctnode * createNode(char *name) {
+  // Create socket
+  int mySocket = socket(AF_INET, SOCK_DGRAM, 0);
+  assert(mySocket != -1);
+
+  // Create sockaddr
+  struct sockaddr_in * channel = calloc(1, sizeof(struct sockaddr_in));
+  channel->sin_family = AF_INET;
+  channel->sin_addr.s_addr = INADDR_ANY;
+
+  // Bind socket to sockaddr
+  assert(bind(mySocket, (struct sockaddr *) channel, sizeof(*channel))==0);
+
+  //Create NodeInfo
+  struct ctnode * node = calloc(1, sizeof(struct ctnode));
+  node->socket = mySocket;
+  node->addr = (struct sockaddr *) channel;
+  node->addrLen = sizeof(*channel);
+
+  return node;
+}
+
+void deleteNode(struct ctnode *node) {
+  free(node->addr);
+  free(node);
+}
+/*
+struct protocol * getProtocol() {
+  struct protocol * prot = calloc(1, sizeof(struct protocol));
+  prot->createNode = &createNode;
+  prot->deleteNode = &deleteNode;
+  return prot;
+}
+*/
