@@ -7,6 +7,8 @@ import sys
 #get the directory to search for -nettest.c files
 path = sys.path[0]
 
+newTestFileNames = []
+
 pieces = []
 pieces = path.split('/')
 
@@ -31,6 +33,7 @@ for f in files:
     newName = newName +  "/" + newPieces[i]
   piecesOfPieces = newPieces[l-1].split('-')
   newName = newName + "/_net_" + piecesOfPieces[0] + "-test.c"
+  newTestFileNames.append(newName)
 
   newF = open(newName, 'w')
   oldF = open(f,'r')
@@ -126,7 +129,7 @@ for f in files:
   for thing in functionNames:
     line = "void cttest_"+thing+"(void) {\n"
     newF.write(line)
-    newF.write("\trunSocketTests(connections);\n}");
+    newF.write("\trunSocketTests(&theProtocol, connections);\n}");
     newF.write("\n\n")
   
   newF.close()
@@ -134,3 +137,5 @@ for f in files:
 
 #f in files loop end
   
+for newFile in newTestFileNames:
+  print newFile, " ",

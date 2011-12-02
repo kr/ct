@@ -33,5 +33,4 @@ gen() {
     printf '};\n'
 }
 
-python ct/nettest.py
 gen `tests "$@" || (echo >&2 no tests found; exit 1)`

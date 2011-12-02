@@ -59,7 +59,7 @@ int runSocketTests(const struct protocol *prot, NetConnection * connections) {
       struct ctnode * toNode = 
         getNodeByName(namedList, numNodes, conCounter->dest);
       assert(toNode != NULL);
-      return conCounter->function(fromNode, toNode);
+      exit(conCounter->function(fromNode, toNode));
     }
     i++; conCounter++;
   }
@@ -70,7 +70,7 @@ int runSocketTests(const struct protocol *prot, NetConnection * connections) {
   while(i < numNodes) {
     assert(waitpid(pids[i], &status, 0) == pids[i]);
     if(status != 0) {
-      return status;
+      exit(status);
     }
     //TODO return any bad ones and give up note freeing things will result
     // in segfaults for still running processes
