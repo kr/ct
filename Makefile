@@ -6,12 +6,12 @@ objs = $(libs:.c=.o)
 preTest	:= $(shell python ct/nettest.py)
 tests = $(wildcard *-test.c)
 tests += $(preTest)
-tobjs := $(tests:.c=.o)
+tobjs = $(tests:.c=.o)
 
 ntests = $(wildcard *-nettest.c)
 nobjs = $(ntests:.c=.o)
 
-protocols = ct/udp_protocol.c
+protocols = ct/udp_protocol.c #ct/my_protocol.c
 pobjs = $(protocols:.c=.o)
 
 all: hello
@@ -26,13 +26,9 @@ ct/ct.o: ct/ct.h
 
 ct/netTestRunner.o: ct/netTestRunner.h ct/netTestRunner.c
 
-ct/_ctcheck: ct/_ctcheck.o ct/ct.o ct/netTestRunner.o $(objs) $(tobjs) $(nobjs) 
+ct/_ctcheck: ct/_ctcheck.o ct/ct.o ct/netTestRunner.o $(objs) $(tobjs) $(nobjs) $(pobjs)
 
-#$(tobjs): $(tests) $(nobjs) $(pobjs)
-
-#_net_sample-net-test.o: $(tobjs) $(nobjs) ct/udp_protocol.c
-_net_sample-net-test.o: _net_sample-net-test.c
-sample-nettest.o: ct/udp_protocol.o ct/protocol.h
+$(tobjs): $(tests) $(nobjs) $(pobjs)
 
 ct/_ctcheck.c: $(tobjs) ct/gen
 	ct/gen $(tobjs) > $@.part
