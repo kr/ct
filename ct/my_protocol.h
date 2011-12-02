@@ -7,14 +7,15 @@
 #include <sys/socket.h>
 
 struct ctnode {
-  int socket;
-  struct sockaddr* addr;
-  socklen_t addrLen;
+  // Insert node information here
 };
 
-struct ctnode * createMyNode(char *);
-void deleteMyNode(struct ctnode *);
+// These functions should be uniquely named for your protocol
+struct ctnode * createMyNode(char *name);
+void deleteMyNode(struct ctnode *node);
 
+// Don't rename this struct. 
+// Make the function pointers inside match the names above
 static const struct protocol theProtocol = { &createMyNode, &deleteMyNode };
 
 #endif

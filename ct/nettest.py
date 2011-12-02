@@ -96,11 +96,13 @@ for f in files:
   for name in functionNames:
     for line in macros:
       dividedDefine = line.split(" ")
-      m = dividedDefine[2]
+      m = dividedDefine[1]
       m = m.strip()
       m = m.strip("\"")
-      if(m==name):
-	con = "{\"" + name +"\", " + name + "," + dividedDefine[1] + "},"
+      m_lower = m.lower()
+      n_lower = name.lower();
+      if(m_lower==n_lower):
+	con = "{\"" + name +"\", " + name + ", " + dividedDefine[1] + "},"
 	connections.append(con)
   
   #write to the new file
@@ -116,6 +118,7 @@ for f in files:
   newF.write("\n")
   for dThing in declarations:
     newF.write(dThing)
+    newF.write("\n");
   
   newF.write("\n")
   newF.write("\n")
