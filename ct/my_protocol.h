@@ -1,5 +1,5 @@
-#ifndef _UDP_PROTOCOL_H
-#define _UDP_PROTOCOL_H
+#ifndef _MY_PROTOCOL_H
+#define _MY_PROTOCOL_H
 
 #include "protocol.h"
 
