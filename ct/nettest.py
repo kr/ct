@@ -96,8 +96,6 @@ for f in files:
       m = dividedDefine[2]
       m = m.strip()
       m = m.strip("\"")
-      print m
-      print name
       if(m==name):
 	con = "{\"" + name +"\", " + name + "," + dividedDefine[1] + "},"
 	connections.append(con)
