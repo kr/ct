@@ -12,9 +12,9 @@ struct ctnode {
   socklen_t addrLen;
 };
 
-struct ctnode * createNode(char *);
-void deleteNode(struct ctnode *);
+struct ctnode * createMyNode(char *);
+void deleteMyNode(struct ctnode *);
 
-static const struct protocol theProtocol = { &createNode, &deleteNode };
+static const struct protocol theProtocol = { &createMyNode, &deleteMyNode };
 
 #endif

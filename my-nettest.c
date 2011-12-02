@@ -1,19 +1,19 @@
 #include "ct/ct.h"
-#include "ct/udp_protocol.h"
+#include "ct/my_protocol.h"
 #include <stdio.h>
 
-#define NETTESTA "nettestb"
-int nettesta(struct ctnode *from, struct ctnode *to) {
-  printf("nettesta\n");
+#define NETTESTC "nettestd"
+int nettestc(struct ctnode *from, struct ctnode *to) {
+  printf("nettestc\n");
   printf("from-socket: %d\n", from->socket);
   printf("to-socket: %d\n", to->socket);
   assert(0);
   return 1;
 }
 
-#define NETTESTB "nettesta"
-int nettestb(struct ctnode *from, struct ctnode *to) {
-  printf("nettestb\n");
+#define NETTESTD "nettestc"
+int nettestd(struct ctnode *from, struct ctnode *to) {
+  printf("nettestd\n");
   printf("from-socket: %d\n", from->socket);
   printf("to-socket: %d\n", to->socket);
   return 1;

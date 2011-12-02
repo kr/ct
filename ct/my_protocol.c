@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include "ct.h"
 
-struct ctnode * createNode(__attribute__((unused)) char *name) {
+struct ctnode * createMyNode(__attribute__((unused)) char *name) {
   // Create socket
   int mySocket = socket(AF_INET, SOCK_DGRAM, 0);
   assert(mySocket != -1);
@@ -25,7 +25,7 @@ struct ctnode * createNode(__attribute__((unused)) char *name) {
   return node;
 }
 
-void deleteNode(struct ctnode *node) {
+void deleteMyNode(struct ctnode *node) {
   free(node->addr);
   free(node);
 }

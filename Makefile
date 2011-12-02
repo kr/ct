@@ -11,7 +11,7 @@ tobjs = $(tests:.c=.o)
 ntests = $(wildcard *-nettest.c)
 nobjs = $(ntests:.c=.o)
 
-protocols = ct/udp_protocol.c #ct/my_protocol.c
+protocols = ct/udp_protocol.c ct/my_protocol.c
 pobjs = $(protocols:.c=.o)
 
 all: hello
