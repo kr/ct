@@ -16,8 +16,7 @@
 
 Optionally, you can define a function named "ctsetup" in your test file. It
 will run before each of the tests in that file. This function should expect no
-arguments and return void. Each test file can define it's own setup function
-or not.
+arguments and return void. Each test file has the option to define its own setup function.
 
 You can also define a function named "ctteardown"; it is the same as ctsetup,
 except ctteardown runs after each test in the same file.

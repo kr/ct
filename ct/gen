@@ -60,6 +60,10 @@ gen() {
 
     Tarray=""
 
+    if [ ! `tests $@` ]; then
+        `echo >&2 no tests found; exit 1`
+    fi
+
     for f in "$@"
     do
         setup=`renamesetup $f`
@@ -89,4 +93,4 @@ gen() {
     printf '};\n'
 }
 
-gen "$@"  #`temp "$@" || (echo >&2 no tests found; exit 1)`
+gen "$@"
