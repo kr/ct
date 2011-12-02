@@ -3,11 +3,12 @@
 
 import glob
 import sys
+import re
+
+newTestFileNames = []
 
 #get the directory to search for -nettest.c files
 path = sys.path[0]
-
-newTestFileNames = []
 
 pieces = []
 pieces = path.split('/')
@@ -31,8 +32,11 @@ for f in files:
   newName = ""
   for i in range(1,l-1):
     newName = newName +  "/" + newPieces[i]
-  piecesOfPieces = newPieces[l-1].split('-')
-  newName = newName + "/_net_" + piecesOfPieces[0] + "-test.c"
+
+  fileName = newPieces[l-1]
+  newFileName = fileName[:-6] + "-" + fileName[-6:]
+  newName = newName + "/_net_" + newFileName
+  alphaNumericFileName = re.sub("\W", "_", fileName)
   newTestFileNames.append(newName)
 
   newF = open(newName, 'w')
@@ -124,11 +128,10 @@ for f in files:
   newF.write("};\n\n")
   
   #write the function
-  for thing in functionNames:
-    line = "void cttest_"+thing+"(void) {\n"
-    newF.write(line)
-    newF.write("\trunSocketTests(&theProtocol, connections);\n}");
-    newF.write("\n\n")
+  line = "void cttestnet"+alphaNumericFileName +"(void) {\n"
+  newF.write(line)
+  newF.write("\trunSocketTests(&theProtocol, connections);\n}");
+  newF.write("\n\n")
   
   newF.close()
   oldF.close()
