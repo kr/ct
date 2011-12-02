@@ -81,14 +81,6 @@ for f in files:
 	getName = getNameRA[1]
 	getName = getName.strip()
 	functionNames.append(getName)
-	
-      
-      #if isNettest==-1:
-      #newF.write(line)
-      #else:
-	#splitLine = line.split('nettest')
-	#newLine = splitLine[0] + "cttest" + splitLine[1]
-    #newF.write(newLine) 
   
   for name in functionNames:
     for line in macros:
