@@ -58,7 +58,7 @@ There is a framework to run cttests over a network. This framework sets up a con
 
 ### Network Testing Protocols
 
-A UDP protocol is provided to work with nettests. This protocol is defined in udp_protcol.*. There is also the option to define your own protocol. A template for defining protocols can be found in my_protocol.*
+A UDP protocol is provided to work with nettests. This protocol is defined in udp_protcol.\*. There is also the option to define your own protocol. A template for defining protocols can be found in my_protocol.\*
 
 ## Releases
 
