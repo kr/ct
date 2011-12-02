@@ -48,6 +48,7 @@ for f in files:
   functionNames = []
 
   for line in oldF:
+    #ignore comments
     isComment = line.find("//")
     if isComment==-1:
       
@@ -55,13 +56,14 @@ for f in files:
       if isInclude!=-1:
 	includes.append(line)
       
+      #keep macro defintions, which are connections
       isConnection = line.find("#define NETTEST")
       if isConnection!=-1:
 	macros.append(line)
-	#dividedDefine = line.split(" ")
 	#[0] = #define [1] = NETTEST* [2]="nettest*"
 	
       elif line.find("#define")!=-1:
+	#keep any defines
 	defines.append(line)
       
       isFunction = line.find("int nettest")
@@ -78,21 +80,15 @@ for f in files:
 	  declare = declare + ";"
 	  declarations.append(declare) 
 	
+	#get the function name
 	getNameRA = line.split("(")
 	getName = getNameRA[0]
 	getNameRA = getName.split(" ")
 	getName = getNameRA[1]
 	getName = getName.strip()
 	functionNames.append(getName)
-	
-      
-      #if isNettest==-1:
-      #newF.write(line)
-      #else:
-	#splitLine = line.split('nettest')
-	#newLine = splitLine[0] + "cttest" + splitLine[1]
-    #newF.write(newLine) 
   
+  #if the function name has a macro definition, make the connection
   for name in functionNames:
     for line in macros:
       dividedDefine = line.split(" ")
@@ -103,6 +99,7 @@ for f in files:
 	con = "{\"" + name +"\", " + name + "," + dividedDefine[1] + "},"
 	connections.append(con)
   
+  #write to the new file
   newF.write("\n")
   for iThing in includes:
     newF.write(iThing)
@@ -126,6 +123,7 @@ for f in files:
   newF.write("\t{NULL, NULL, NULL}\n")
   newF.write("};\n\n")
   
+  #write the function
   for thing in functionNames:
     line = "void cttest_"+thing+"(void) {\n"
     newF.write(line)
