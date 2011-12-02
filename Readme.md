@@ -43,6 +43,23 @@ cttestsegfault: error (signal 11)
 make: *** [check] Error 1
 ```
 
+## Network Testing
+
+There is a framework to run cttests over a network. This framework sets up a connection between two sockets on the computer.
+
+### How to use
+
+0. See sample-nettest.c for an example.
+1. Make sure to #include "ct/ct.h" and the appropriate ?_protocol.h file
+2. Use a #define to define a connection between functions. 
+    For example, #define NETTESTA "nettestb" makes a connection from nettesta to nettestb
+3. Functions beginning with "nettest" are network tests. These functions should return an int and take two struct ctnode * as arguments.
+4. Run `make check` as you would for regular cttests
+
+### Network Testing Protocols
+
+A UDP protocol is provided to work with nettests. This protocol is defined in udp_protcol.*. There is also the option to define your own protocol. A template for defining protocols can be found in my_protocol.*
+
 ## Releases
 
 There will be no releases of this tool. Just clone the latest source from git
