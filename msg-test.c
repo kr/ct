@@ -7,12 +7,12 @@
 
 /* this function will run before each cttest in this file */
 void ctsetup(){
-    fprintf(stderr, "hi!\n");
+    ;
 }
 
 /* this function will run after each cttest in this file */
 void ctteardown(){
-    fprintf(stderr, "bye\n");
+    ;
 }
 
 void

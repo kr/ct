@@ -38,19 +38,15 @@ ct/_ctcheck
 .EFFE.
 
 cttestexit: error (exit status 2)
-hi!
 
 cttestfailure: failure
-hi!
 msg-test.c:30: test: 1 == 2
 
 cttestfmt: failure
-hi!
 msg-test.c:37: test: n == 2
 msg-test.c:37: n is 1
 
 cttestsegfault: error (signal 11)
-hi!
 
 2 failures; 2 errors.
 make: *** [check] Error 1
