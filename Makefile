@@ -32,4 +32,4 @@ ct/_ctcheck.c: $(tobjs) ct/gen
 
 .PHONY: clean
 clean:
-	rm -f ct/_* *.o ct/*.o hello
+	rm -f ct/_* *.o _net_* ct/*.o hello

@@ -30,21 +30,109 @@ for f in files:
   for i in range(1,l-1):
     newName = newName +  "/" + newPieces[i]
   piecesOfPieces = newPieces[l-1].split('-')
-  newName = newName + "/" + piecesOfPieces[0] + "-test.c"
+  newName = newName + "/_net_" + piecesOfPieces[0] + "-test.c"
 
   newF = open(newName, 'w')
   oldF = open(f,'r')
   
   #rewrite the -nettest file into the -test file
+  newF.write("#include \"ct/netTestRunner.h\"")
+  includes = []
+  defines = []
+  declarations = []
+  macros = []
+  connections = []
+  functionNames = []
+
   for line in oldF:
-    isNettest = line.find("nettest")
-    if isNettest==-1:
-      newF.write(line)
-    else:
-      splitLine = line.split('nettest')
-      newLine = splitLine[0] + "cttest" + splitLine[1]
-      newF.write(newLine)
-    
+    isComment = line.find("//")
+    if isComment==-1:
+      
+      isInclude = line.find("#include")
+      if isInclude!=-1:
+	includes.append(line)
+      
+      isConnection = line.find("#define NETTEST")
+      if isConnection!=-1:
+	macros.append(line)
+	#dividedDefine = line.split(" ")
+	#[0] = #define [1] = NETTEST* [2]="nettest*"
+	
+      elif line.find("#define")!=-1:
+	defines.append(line)
+      
+      isFunction = line.find("int nettest")
+      if isFunction!=-1:
+	#forward declare the nettest functions
+	hasBracket = line.find("{");
+	if hasBracket==-1:
+	  declare = line + ";"
+	  declarations.append(declare)
+	else:
+	  splitLine = line.split('{')
+	  declare = splitLine[0]
+	  declare = declare.strip()
+	  declare = declare + ";"
+	  declarations.append(declare) 
+	
+	getNameRA = line.split("(")
+	getName = getNameRA[0]
+	getNameRA = getName.split(" ")
+	getName = getNameRA[1]
+	getName = getName.strip()
+	functionNames.append(getName)
+	
+      
+      #if isNettest==-1:
+      #newF.write(line)
+      #else:
+	#splitLine = line.split('nettest')
+	#newLine = splitLine[0] + "cttest" + splitLine[1]
+    #newF.write(newLine) 
+  
+  for name in functionNames:
+    for line in macros:
+      dividedDefine = line.split(" ")
+      m = dividedDefine[2]
+      m = m.strip()
+      m = m.strip("\"")
+      print m
+      print name
+      if(m==name):
+	con = "{\"" + name +"\", " + name + "," + dividedDefine[1] + "},"
+	connections.append(con)
+  
+  newF.write("\n")
+  for iThing in includes:
+    newF.write(iThing)
+  newF.write("\n")
+  for thing in defines:
+    newF.write(thing)
+  newF.write("\n")
+  for mThing in macros:
+    newF.write(mThing)
+  newF.write("\n")
+  for dThing in declarations:
+    newF.write(dThing)
+  
+  newF.write("\n")
+  newF.write("\n")
+  newF.write("static NetConnection connections[] = {\n")
+  #and now we write connections
+  for thing in connections:
+    line = "\t"+thing+"\n"
+    newF.write(line)
+  newF.write("\t{NULL, NULL, NULL}\n")
+  newF.write("};\n\n")
+  
+  for thing in functionNames:
+    line = "void cttest_"+thing+"(void) {\n"
+    newF.write(line)
+    newF.write("\trunSocketTests(connections);\n}");
+    newF.write("\n\n")
+  
   newF.close()
   oldF.close()
+
+#f in files loop end
   
