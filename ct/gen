@@ -17,6 +17,7 @@ tests() {
 
 gen() {
     printf '#include "internal.h"\n'
+    printf '#include <stdlib.h>\n'
     printf '\n'
 
     for t in "$@"
@@ -26,9 +27,9 @@ gen() {
 
     printf 'T ctmain[] = {\n'
     for t in "$@"
-    do printf '    {%s, "%s"},\n' $t $t
+    do printf '    {%s, "%s", -1, -1},\n' $t $t
     done
-    printf '    {},\n'
+    printf '    {NULL, NULL, -1, -1},\n'
     printf '};\n'
 }
 
