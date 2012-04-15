@@ -9,27 +9,88 @@ fixsyms() {
     fi
 }
 
-tests() {
-    for f in "$@"
-    do nm $f
-    done | cut -d ' ' -f 3 | fixsyms | egrep ^cttest
+renametests() {
+    f=$1
+    ff=`echo $f | sed s/[^a-zA-Z0-9_]/_/g`
+    for n in `nm $f | cut -d ' ' -f 3 | fixsyms | egrep ^cttest`
+    do
+        objcopy --redefine-sym $n=$n"_"$ff $f
+    done
+    nm $f | cut -d ' ' -f 3 | fixsyms | egrep ^cttest
 }
 
+tests() {
+    for f in "$@"
+    do nm $f | cut -d ' ' -f 3 | fixsyms | egrep ^cttest
+    done
+}
+
+renamesetup() {
+    f=$1
+    ff=`echo $f | sed s/[^a-zA-Z0-9_]/_/g`
+    for n in `nm $f | cut -d ' ' -f 3 | fixsyms | egrep ^ctsetup$`
+    do
+        objcopy --redefine-sym $n=$n"_"$ff $f
+    done
+
+    if [ -z `nm $f | cut -d ' ' -f 3 | fixsyms | egrep ^ctsetup_$ff$` ]; then
+        echo "NULL"
+    else
+        echo "ctsetup_"$ff
+    fi
+}
+renameteardown() {
+    f=$1
+    ff=`echo $f | sed s/[^a-zA-Z0-9_]/_/g`
+    for n in `nm $f | cut -d ' ' -f 3 | fixsyms | egrep ^ctteardown$`
+    do
+        objcopy --redefine-sym $n=$n"_"$ff $f
+    done
+
+    if [ -z `nm $f | cut -d ' ' -f 3 | fixsyms | egrep ^ctteardown_$ff$` ]; then
+        echo "NULL"
+    else
+        echo "ctteardown_"$ff
+    fi
+}
 gen() {
     printf '#include "internal.h"\n'
+    printf '#include <stdlib.h>\n'
     printf '\n'
 
-    for t in "$@"
-    do printf 'void %s(void);\n' $t
+    Tarray=""
+
+    if [ ! `tests $@` ]; then
+        `echo >&2 no tests found; exit 1`
+    fi
+
+    for f in "$@"
+    do
+        setup=`renamesetup $f`
+        teardown=`renameteardown $f`
+        funcs=`renametests $f`
+        if [ "$setup" != "NULL" ]; then
+            echo $setup >&2
+            printf 'void %s(void);\n' $setup
+        fi
+
+        if [ "$teardown" != "NULL" ]; then
+            printf 'void %s(void);\n' $teardown
+        fi
+
+        for t in $funcs
+        do 
+            printf 'void %s(void);\n' $t
+            temp="`printf  '    {%s, "%s", -1, -1, %s, %s},' $t $t $setup $teardown`"
+            Tarray=$Tarray''$temp'\n'
+        done
+        printf '\n'
     done
-    printf '\n'
 
     printf 'T ctmain[] = {\n'
-    for t in "$@"
-    do printf '    {%s, "%s"},\n' $t $t
-    done
-    printf '    {},\n'
+    printf "$Tarray"
+    printf '    {NULL, NULL, -1, -1, NULL, NULL},\n'
     printf '};\n'
 }
 
-gen `tests "$@" || (echo >&2 no tests found; exit 1)`
+gen "$@"

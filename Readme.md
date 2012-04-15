@@ -12,6 +12,15 @@
    from one test will not affect another.
 4. Run `make check`
 
+##Setup and Teardown
+
+Optionally, you can define a function named "ctsetup" in your test file. It
+will run before each of the tests in that file. This function should expect no
+arguments and return void. Each test file has the option to define its own setup function.
+
+You can also define a function named "ctteardown"; it is the same as ctsetup,
+except ctteardown runs after each test in the same file.
+
 ## Terminal Output
 
 Running `make check` in the example supplied looks like this:

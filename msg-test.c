@@ -4,6 +4,17 @@
 #include "msg.h"
 #include "ct/ct.h"
 
+
+/* this function will run before each cttest in this file */
+void ctsetup(){
+    ;
+}
+
+/* this function will run after each cttest in this file */
+void ctteardown(){
+    ;
+}
+
 void
 cttestset()
 {

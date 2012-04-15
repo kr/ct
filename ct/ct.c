@@ -82,7 +82,14 @@ run(T t[])
             if (dup2(1, 2) == -1) {
                 die(3, errno, "dup2");
             }
+
+            if(t->setup != NULL){
+                t->setup();
+            }
             t->f();
+            if(t->teardown != NULL){
+                t->teardown();
+            }
             exit(0);
         }
 
@@ -157,7 +164,7 @@ report(T t[])
 
 
 int
-main(int argc, char *argv[])
+main(void)
 {
     run(ctmain);
     return report(ctmain);
