@@ -1,5 +1,7 @@
 /* msg.c - keep track of a message */
 
+#include "msg.h"
+
 static char *msg = "default message";
 
 void
@@ -9,7 +11,7 @@ set_message(char *m)
 }
 
 char *
-get_message()
+get_message(void)
 {
     return msg;
 }

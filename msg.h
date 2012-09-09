@@ -2,4 +2,4 @@
 
 void set_message(char *m);
 
-char *get_message();
+char *get_message(void);

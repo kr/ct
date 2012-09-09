@@ -58,4 +58,4 @@ Also with ideas from the [Go testing package][gotesting] and [gotest][].
 [Makefile]: https://github.com/kr/ct/blob/master/Makefile
 [msg-test.c]: https://github.com/kr/ct/blob/master/msg-test.c
 [gotesting]: http://golang.org/pkg/testing/
-[gotest]: http://golang.org/cmd/gotest/
+[gotest]: http://golang.org/cmd/go/#Test_packages
