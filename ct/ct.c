@@ -10,6 +10,7 @@
 #include <sys/wait.h>
 #include <errno.h>
 #include "internal.h"
+#include "ct.h"
 
 
 void
