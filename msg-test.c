@@ -40,7 +40,7 @@ cttestfmt()
 void
 cttestsegfault()
 {
-    *(int*)0 = 0;
+    *(volatile int*)0 = 0;
 }
 
 void

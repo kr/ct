@@ -105,11 +105,11 @@ run(T t[])
 static void
 copyfd(FILE *out, int in)
 {
-    int n;
+    ssize_t n;
     char buf[1024]; // arbitrary size
 
     while ((n = read(in, buf, sizeof(buf))) != 0) {
-        if (fwrite(buf, 1, n, out) != n) {
+        if (fwrite(buf, 1, n, out) != (size_t)n) {
             die(3, errno, "fwrite");
         }
     }
@@ -157,7 +157,7 @@ report(T t[])
 
 
 int
-main(int argc, char *argv[])
+main()
 {
     run(ctmain);
     return report(ctmain);
