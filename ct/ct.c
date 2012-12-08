@@ -74,6 +74,7 @@ run(T t[])
         if (pid < 0) {
             die(1, errno, "fork");
         } else if (!pid) {
+            setpgid(0, 0);
             if (dup2(t->fd, 1) == -1) {
                 die(3, errno, "dup2");
             }
@@ -86,10 +87,12 @@ run(T t[])
             t->f();
             exit(0);
         }
+        setpgid(pid, pid);
 
         if (waitpid(pid, &t->status, 0) != pid) {
             die(3, errno, "wait");
         }
+        killpg(pid, 9);
 
         if (!t->status) {
             putchar('.');
