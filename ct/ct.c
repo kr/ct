@@ -8,9 +8,13 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <sys/wait.h>
+#include <fcntl.h>
 #include <errno.h>
 #include "internal.h"
 #include "ct.h"
+
+
+static int rjobfd = -1, wjobfd = -1;
 
 
 void
@@ -59,49 +63,77 @@ failed(int s)
 
 
 static void
-run(T t[])
+waittest(void)
 {
-    int pid;
+    T *t;
+    int pid, stat;
+
+    pid = wait3(&stat, 0, 0);
+    if (pid == -1) {
+        die(3, errno, "wait");
+    }
+    killpg(pid, 9);
+
+    for (t=ctmain; t->f; t++) {
+        if (t->pid == pid) {
+            t->status = stat;
+            if (!t->status) {
+                putchar('.');
+            } else if (failed(t->status)) {
+                putchar('F');
+            } else {
+                putchar('E');
+            }
+            fflush(stdout);
+        }
+    }
+}
+
+
+static void
+start(T *t)
+{
     FILE *out;
+    out = tmpfile();
+    if (!out) {
+        die(1, errno, "tmpfile");
+    }
+    t->fd = fileno(out);
+    t->pid = fork();
+    if (t->pid < 0) {
+        die(1, errno, "fork");
+    } else if (!t->pid) {
+        setpgid(0, 0);
+        if (dup2(t->fd, 1) == -1) {
+            die(3, errno, "dup2");
+        }
+        if (close(t->fd) == -1) {
+            die(3, errno, "fclose");
+        }
+        if (dup2(1, 2) == -1) {
+            die(3, errno, "dup2");
+        }
+        t->f();
+        exit(0);
+    }
+    setpgid(t->pid, t->pid);
+}
 
+
+static void
+runall(T t[], int limit)
+{
+    int nrun = 0;
     for (; t->f; t++) {
-        out = tmpfile();
-        if (!out) {
-            die(1, errno, "tmpfile");
+        if (nrun >= limit) {
+            waittest();
+            nrun--;
         }
-        t->fd = fileno(out);
-        pid = fork();
-        if (pid < 0) {
-            die(1, errno, "fork");
-        } else if (!pid) {
-            setpgid(0, 0);
-            if (dup2(t->fd, 1) == -1) {
-                die(3, errno, "dup2");
-            }
-            if (close(t->fd) == -1) {
-                die(3, errno, "fclose");
-            }
-            if (dup2(1, 2) == -1) {
-                die(3, errno, "dup2");
-            }
-            t->f();
-            exit(0);
-        }
-        setpgid(pid, pid);
-
-        if (waitpid(pid, &t->status, 0) != pid) {
-            die(3, errno, "wait");
-        }
-        killpg(pid, 9);
-
-        if (!t->status) {
-            putchar('.');
-        } else if (failed(t->status)) {
-            putchar('F');
-        } else {
-            putchar('E');
-        }
-        fflush(stdout);
+        start(t);
+        nrun++;
+    }
+    for (; nrun; nrun--) {
+        waittest();
     }
 }
 
@@ -161,8 +193,42 @@ report(T t[])
 
 
 int
+readtokens()
+{
+    int n = 1;
+    char c, *s;
+    if ((s = strstr(getenv("MAKEFLAGS"), " --jobserver-fds="))) {
+        rjobfd = (int)strtol(s+17, &s, 10);  // skip " --jobserver-fds="
+        wjobfd = (int)strtol(s+1, NULL, 10); // skip comma
+    }
+    if (rjobfd >= 0) {
+        fcntl(rjobfd, F_SETFL, fcntl(rjobfd, F_GETFL)|O_NONBLOCK);
+        while (read(rjobfd, &c, 1) > 0) {
+            n++;
+        }
+    }
+    return n;
+}
+
+
+void
+writetokens(int n)
+{
+    char c = '+';
+    if (wjobfd >= 0) {
+        fcntl(wjobfd, F_SETFL, fcntl(wjobfd, F_GETFL)|O_NONBLOCK);
+        for (; n>1; n--) {
+            write(wjobfd, &c, 1); // ignore error; nothing we can do anyway
+        }
+    }
+}
+
+
+int
 main()
 {
-    run(ctmain);
+    int n = readtokens();
+    runall(ctmain, n);
+    writetokens(n);
     return report(ctmain);
 }

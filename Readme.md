@@ -18,13 +18,18 @@ global state from one test will not affect another.
 in the group will be killed after the test finishes. This
 means your test can fork without having to worry about
 cleaning up its descendants.
+- CT participates in GNU make's jobserver protocol. If you
+put a `+` in front of the _ctcheck command (as in the sample
+makefile) and run make with its `-jN` flag, for example
+`make -j16 check`, CT will run tests concurrently (and
+hopefully in parallel).
 
 ## Terminal Output
 
 Running `make check` in the example supplied looks like this:
 
 ```
-~/Projects/ct[master]: make check
+~/Projects/ct[master]: make -j4 check
 cc -Werror -Wall   -c -o msg-test.o msg-test.c
 ct/gen msg-test.o > ct/_ctcheck.c.part
 mv ct/_ctcheck.c.part ct/_ctcheck.c
@@ -33,7 +38,7 @@ cc -Werror -Wall   -c -o ct/ct.o ct/ct.c
 cc -Werror -Wall   -c -o msg.o msg.c
 cc   ct/_ctcheck.o ct/ct.o msg.o msg-test.o   -o ct/_ctcheck
 ct/_ctcheck
-.EFFE.
+E..FEF
 
 cttestexit: error (exit status 2)
 

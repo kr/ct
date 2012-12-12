@@ -12,7 +12,7 @@ hello: hello.o $(objs)
 
 .PHONY: check
 check: ct/_ctcheck
-	ct/_ctcheck
+	+ct/_ctcheck
 
 ct/ct.o: ct/ct.h
 
