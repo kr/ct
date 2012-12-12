@@ -7,10 +7,17 @@
 1. Copy subdirectory `ct` into your project.
 2. Add some rules to your makefile. See [Makefile][] for an example.
 3. Write some tests. See [msg-test.c][] for an example.
-   Test functions are those whose names begin with "cttest".
-   The test runner forks before each test, so global state
-   from one test will not affect another.
+   Test function names begin with "cttest".
 4. Run `make check`
+
+## Behavior
+
+- The test runner runs each test in a separate process, so
+global state from one test will not affect another.
+- Each test is run in a new process group; all processes
+in the group will be killed after the test finishes. This
+means your test can fork without having to worry about
+cleaning up its descendants.
 
 ## Terminal Output
 
