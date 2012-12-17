@@ -114,7 +114,7 @@ start(T *t)
             die(3, errno, "dup2");
         }
         t->f();
-        exit(0);
+        _exit(0);
     }
     setpgid(t->pid, t->pid);
 }
