@@ -26,7 +26,7 @@ hopefully in parallel).
 
 ## Terminal Output
 
-Running `make check` in the example supplied looks like this:
+Running `make -j4 check` in the example supplied looks like this:
 
 ```
 ~/Projects/ct[master]: make -j4 check
