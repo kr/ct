@@ -1,5 +1,7 @@
 #include <string.h>
 #include <stdlib.h>
+#include <unistd.h>
+#include <fcntl.h>
 #include <stdio.h>
 #include "msg.h"
 #include "ct/ct.h"
@@ -41,6 +43,13 @@ void
 cttestsegfault()
 {
     *(volatile int*)0 = 0;
+}
+
+void
+cttesttmpdir()
+{
+    assert(chdir(ctdir()) == 0);
+    assert(open("x", O_CREAT|O_RDWR, 0777));
 }
 
 void

@@ -23,6 +23,9 @@ put a `+` in front of the _ctcheck command (as in the sample
 makefile) and run make with its `-jN` flag, for example
 `make -j16 check`, CT will run tests concurrently (and
 hopefully in parallel).
+- A scratch directory can be obtained by calling ctdir()
+inside the test. This directory will be removed by the test
+runner after the test finishes.
 
 ## Terminal Output
 
@@ -38,7 +41,7 @@ cc -Werror -Wall   -c -o ct/ct.o ct/ct.c
 cc -Werror -Wall   -c -o msg.o msg.c
 cc   ct/_ctcheck.o ct/ct.o msg.o msg-test.o   -o ct/_ctcheck
 ct/_ctcheck
-E..FEF
+E...FEF
 
 cttestexit: error (exit status 2)
 

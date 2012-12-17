@@ -6,14 +6,17 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include <sys/types.h>
+#include <sys/stat.h>
 #include <unistd.h>
 #include <sys/wait.h>
 #include <fcntl.h>
+#include <dirent.h>
 #include <errno.h>
 #include "internal.h"
 #include "ct.h"
 
 
+static T *curtest;
 static int rjobfd = -1, wjobfd = -1;
 
 
@@ -36,6 +39,14 @@ ctfail(void)
     fflush(stdout);
     fflush(stderr);
     abort();
+}
+
+
+char *
+ctdir(void)
+{
+    mkdir(curtest->dir, 0700);
+    return curtest->dir;
 }
 
 
@@ -99,6 +110,8 @@ start(T *t)
         die(1, errno, "tmpfile");
     }
     t->fd = fileno(out);
+    strcpy(t->dir, TmpDirPat);
+    mktemp(t->dir);
     t->pid = fork();
     if (t->pid < 0) {
         die(1, errno, "fork");
@@ -113,6 +126,7 @@ start(T *t)
         if (dup2(1, 2) == -1) {
             die(3, errno, "dup2");
         }
+        curtest = t;
         t->f();
         _exit(0);
     }
@@ -152,6 +166,47 @@ copyfd(FILE *out, int in)
 }
 
 
+// Removes path and all of its children.
+// Writes errors to stderr and keeps going.
+// If path doesn't exist, rmtree returns silently.
+static void
+rmtree(char *path)
+{
+    int r = unlink(path);
+    if (r == 0 || errno == ENOENT) {
+        return; // success
+    }
+    int unlinkerr = errno;
+
+    DIR *d = opendir(path);
+    if (!d) {
+        if (errno == ENOTDIR) {
+            fprintf(stderr, "ct: unlink: %s\n", strerror(unlinkerr));
+        } else {
+            perror("ct: opendir");
+        }
+        fprintf(stderr, "ct: path %s\n", path);
+        return;
+    }
+    struct dirent *ent;
+    while ((ent = readdir(d))) {
+        if (strcmp(ent->d_name, ".") == 0 || strcmp(ent->d_name, "..") == 0) {
+            continue;
+        }
+        int n = strlen(path) + 1 + strlen(ent->d_name);
+        char s[n];
+        sprintf(s, "%s/%s", path, ent->d_name);
+        rmtree(s);
+    }
+    closedir(d);
+    r = rmdir(path);
+    if (r == -1) {
+        perror("ct: rmdir");
+        fprintf(stderr, "ct: path %s\n", path);
+    }
+}
+
+
 static int
 report(T t[])
 {
@@ -159,6 +214,7 @@ report(T t[])
 
     putchar('\n');
     for (; t->f; t++) {
+        rmtree(t->dir);
         if (!t->status) {
             continue;
         }

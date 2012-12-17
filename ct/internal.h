@@ -1,3 +1,5 @@
+#define TmpDirPat "/tmp/ct.XXXXXX"
+
 typedef struct T T;
 
 struct T {
@@ -6,6 +8,7 @@ struct T {
     int  status;
     int  fd;
     int  pid;
+    char dir[sizeof TmpDirPat];
 };
 
 extern T ctmain[];
