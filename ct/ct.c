@@ -16,7 +16,7 @@
 #include "ct.h"
 
 
-static T *curtest;
+static Test *curtest;
 static int rjobfd = -1, wjobfd = -1;
 
 
@@ -76,7 +76,7 @@ failed(int s)
 static void
 waittest(void)
 {
-    T *t;
+    Test *t;
     int pid, stat;
 
     pid = wait3(&stat, 0, 0);
@@ -102,7 +102,7 @@ waittest(void)
 
 
 static void
-start(T *t)
+start(Test *t)
 {
     FILE *out;
     out = tmpfile();
@@ -135,7 +135,7 @@ start(T *t)
 
 
 static void
-runall(T t[], int limit)
+runall(Test t[], int limit)
 {
     int nrun = 0;
     for (; t->f; t++) {
@@ -208,7 +208,7 @@ rmtree(char *path)
 
 
 static int
-report(T t[])
+report(Test t[])
 {
     int nfail = 0, nerr = 0;
 

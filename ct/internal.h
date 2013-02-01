@@ -1,8 +1,8 @@
 #define TmpDirPat "/tmp/ct.XXXXXX"
 
-typedef struct T T;
+typedef struct Test Test;
 
-struct T {
+struct Test {
     void (*f)(void);
     char *name;
     int  status;
@@ -11,4 +11,4 @@ struct T {
     char dir[sizeof TmpDirPat];
 };
 
-extern T ctmain[];
+extern Test ctmain[];
