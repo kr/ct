@@ -194,7 +194,7 @@ rmtree(char *path)
             continue;
         }
         int n = strlen(path) + 1 + strlen(ent->d_name);
-        char s[n];
+        char s[n+1];
         sprintf(s, "%s/%s", path, ent->d_name);
         rmtree(s);
     }
