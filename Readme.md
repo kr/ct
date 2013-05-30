@@ -32,31 +32,22 @@ runner after the test finishes.
 Running `make -j4 check` in the example supplied looks like this:
 
 ```
-~/Projects/ct[master]: make -j4 check
-cc -Werror -Wall   -c -o msg-test.o msg-test.c
+$ make -j4 check
+cc -Werror -Wall -Wformat=2   -c -o msg-test.o msg-test.c
+cc -Werror -Wall -Wformat=2   -c -o ct/ct.o ct/ct.c
+cc -Werror -Wall -Wformat=2   -c -o msg.o msg.c
 ct/gen msg-test.o > ct/_ctcheck.c.part
 mv ct/_ctcheck.c.part ct/_ctcheck.c
-cc -Werror -Wall   -c -o ct/_ctcheck.o ct/_ctcheck.c
-cc -Werror -Wall   -c -o ct/ct.o ct/ct.c
-cc -Werror -Wall   -c -o msg.o msg.c
+cc -Werror -Wall -Wformat=2   -c -o ct/_ctcheck.o ct/_ctcheck.c
 cc   ct/_ctcheck.o ct/ct.o msg.o msg-test.o   -o ct/_ctcheck
 ct/_ctcheck
-E...FEF
+.......
 
-cttestexit: error (exit status 2)
-
-cttestfailure: failure
-msg-test.c:30: test: 1 == 2
-
-cttestfmt: failure
-msg-test.c:37: test: n == 2
-msg-test.c:37: n is 1
-
-cttestsegfault: error (signal 11)
-
-2 failures; 2 errors.
-make: *** [check] Error 1
+PASS
 ```
+
+Remove some of the return statements in msg-test.c to see
+what various errors and failures look like.
 
 ## Releases
 
