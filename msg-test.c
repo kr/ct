@@ -61,3 +61,12 @@ cttestexit()
     return; // remove this line to see an exit error
     exit(2);
 }
+
+void
+ctbenchprintf(int n)
+{
+    int i;
+    for (i = 0; i < n; i++) {
+        printf("hello, world!\n");
+    }
+}

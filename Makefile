@@ -1,4 +1,4 @@
-CFLAGS ?= -Werror -Wextra -Wformat=2
+CFLAGS ?= -Werror -Wall -Wformat=2
 
 libs = msg.c
 objs = $(libs:.c=.o)
@@ -13,6 +13,10 @@ hello: hello.o $(objs)
 .PHONY: check
 check: ct/_ctcheck
 	+ct/_ctcheck
+
+.PHONY: bench
+bench: ct/_ctcheck
+	+ct/_ctcheck -b
 
 ct/ct.o: ct/ct.h
 
