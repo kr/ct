@@ -310,7 +310,10 @@ runbenchn(Benchmark *b, int n)
     lseek(durfd, 0, SEEK_SET);
     int r = read(durfd, &b->dur, sizeof b->dur);
     if (r != sizeof b->dur) {
-        die(3, errno, "read");
+        perror("read");
+        if (b->status == 0) {
+            b->status = 1;
+        }
     }
 }
 
@@ -393,7 +396,22 @@ runbench(Benchmark *b)
         n = roundup(n);
         runbenchn(b, n);
     }
-    printf("%8d\t%10lld ns/op\n", n, b->dur/n);
+    if (b->status == 0) {
+        printf("%8d\t%10lld ns/op\n", n, b->dur/n);
+    } else {
+        if (failed(b->status)) {
+            printf("failure");
+        } else {
+            printf("error");
+            if (WIFEXITED(b->status)) {
+                printf(" (exit status %d)", WEXITSTATUS(b->status));
+            }
+            if (WIFSIGNALED(b->status)) {
+                printf(" (signal %d)", WTERMSIG(b->status));
+            }
+        }
+        putchar('\n');
+    }
 }
 
 
