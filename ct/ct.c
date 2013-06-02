@@ -20,6 +20,8 @@
 
 static char *curdir;
 static int rjobfd = -1, wjobfd = -1;
+static int64 bstart, bdur;
+static int btiming; // bool
 static const int64 Second = 1000 * 1000 * 1000;
 static const int64 BenchTime = Second;
 static const int MaxN = 1000 * 1000 * 1000;
@@ -74,6 +76,34 @@ ctdir(void)
 {
     mkdir(curdir, 0700);
     return curdir;
+}
+
+
+void
+ctresettimer(void)
+{
+    bdur = 0;
+    bstart = nstime();
+}
+
+
+void
+ctstarttimer(void)
+{
+    if (!btiming) {
+        bstart = nstime();
+        btiming = 1;
+    }
+}
+
+
+void
+ctstoptimer(void)
+{
+    if (btiming) {
+        bdur += nstime() - bstart;
+        btiming = 0;
+    }
 }
 
 
@@ -263,11 +293,10 @@ runbenchn(Benchmark *b, int n)
             die(3, errno, "dup2");
         }
         curdir = b->dir;
-        int64 t0 = nstime();
+        ctstarttimer();
         b->f(n);
-        int64 t1 = nstime();
-        int64 d = t1 - t0;
-        write(durfd, &d, sizeof d);
+        ctstoptimer();
+        write(durfd, &bdur, sizeof bdur);
         _exit(0);
     }
     setpgid(pid, pid);
