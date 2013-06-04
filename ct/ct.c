@@ -307,13 +307,18 @@ runbenchn(Benchmark *b, int n)
     }
     killpg(pid, 9);
     rmtree(b->dir);
+    if (b->status != 0) {
+        putchar('\n');
+        lseek(outfd, 0, SEEK_SET);
+        copyfd(stdout, outfd);
+        return;
+    }
+
     lseek(durfd, 0, SEEK_SET);
     int r = read(durfd, &b->dur, sizeof b->dur);
     if (r != sizeof b->dur) {
         perror("read");
-        if (b->status == 0) {
-            b->status = 1;
-        }
+        b->status = 1;
     }
 }
 
