@@ -66,7 +66,19 @@ void
 ctbenchprintf(int n)
 {
     int i;
+    char *m = get_message();
     for (i = 0; i < n; i++) {
-        printf("hello, world!\n");
+        printf("%s\n", m);
+    }
+}
+
+void
+ctbenchprintsz(int n)
+{
+    int i;
+    char *m = get_message();
+    ctsetbytes(strlen(m)+1);
+    for (i = 0; i < n; i++) {
+        printf("%s\n", m);
     }
 }
