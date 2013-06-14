@@ -23,9 +23,9 @@ static int rjobfd = -1, wjobfd = -1;
 static int64 bstart, bdur;
 static int btiming; // bool
 static int64 bbytes;
-static const int64 Second = 1000 * 1000 * 1000;
-static const int64 BenchTime = Second;
-static const int MaxN = 1000 * 1000 * 1000;
+enum { Second = 1000 * 1000 * 1000 };
+enum { BenchTime = Second };
+enum { MaxN = 1000 * 1000 * 1000 };
 
 
 
