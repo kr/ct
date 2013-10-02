@@ -40,6 +40,7 @@ nstime()
 }
 
 #else
+#	include <time.h>
 
 static int64
 nstime()
