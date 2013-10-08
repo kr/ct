@@ -22,7 +22,7 @@ ct/ct.o: ct/ct.h
 
 $(tobjs): ct/ct.h
 
-ct/_ctcheck: ct/_ctcheck.o ct/ct.o $(objs) $(tobjs)
+ct/_ctcheck: ct/_ctcheck.o ct/ct.o $(objs) $(tobjs) -lrt
 
 ct/_ctcheck.c: $(tobjs) ct/gen
 	ct/gen $(tobjs) > $@.part
