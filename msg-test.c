@@ -29,14 +29,14 @@ cttestdefault()
 void
 cttestfailure()
 {
-    return; // remove this line to see a failure
+    return; /* remove this line to see a failure */
     assert(1 == 2);
 }
 
 void
 cttestfmt()
 {
-    return; // remove this line to see a failure with formatting
+    return; /* remove this line to see a failure with formatting */
     int n = 1;
     assertf(n == 2, "n is %d", n);
 }
@@ -44,7 +44,7 @@ cttestfmt()
 void
 cttestsegfault()
 {
-    return; // remove this line to see a segfault error
+    return; /* remove this line to see a segfault error */
     *(volatile int*)0 = 0;
 }
 
@@ -58,7 +58,7 @@ cttesttmpdir()
 void
 cttestexit()
 {
-    return; // remove this line to see an exit error
+    return; /* remove this line to see an exit error */
     exit(2);
 }
 

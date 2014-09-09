@@ -1,4 +1,4 @@
-// CT - simple-minded unit testing for C
+/* CT - simple-minded unit testing for C */
 
 #include <signal.h>
 #include <string.h>
@@ -22,7 +22,7 @@
 static char *curdir;
 static int rjobfd = -1, wjobfd = -1;
 static int64 bstart, bdur;
-static int btiming; // bool
+static int btiming; /* bool */
 static int64 bbytes;
 enum { Second = 1000 * 1000 * 1000 };
 enum { BenchTime = Second };
@@ -230,7 +230,7 @@ static void
 copyfd(FILE *out, int in)
 {
     ssize_t n;
-    char buf[1024]; // arbitrary size
+    char buf[1024]; /* arbitrary size */
 
     while ((n = read(in, buf, sizeof(buf))) != 0) {
         if (fwrite(buf, 1, n, out) != (size_t)n) {
@@ -240,15 +240,17 @@ copyfd(FILE *out, int in)
 }
 
 
-// Removes path and all of its children.
-// Writes errors to stderr and keeps going.
-// If path doesn't exist, rmtree returns silently.
+/*
+Removes path and all of its children.
+Writes errors to stderr and keeps going.
+If path doesn't exist, rmtree returns silently.
+*/
 static void
 rmtree(char *path)
 {
     int r = unlink(path);
     if (r == 0 || errno == ENOENT) {
-        return; // success
+        return; /* success */
     }
     int unlinkerr = errno;
 
@@ -339,17 +341,17 @@ runbenchn(Benchmark *b, int n)
 }
 
 
-// rounddown10 rounds a number down to the nearest power of 10.
+/* rounddown10 rounds a number down to the nearest power of 10. */
 static int
 rounddown10(int n)
 {
     int tens = 0;
-    // tens = floor(log_10(n))
+    /* tens = floor(log_10(n)) */
     while (n >= 10) {
         n = n / 10;
         tens++;
     }
-    // result = 10**tens
+    /* result = 10**tens */
     int i, result = 1;
     for (i = 0; i < tens; i++) {
         result *= 10;
@@ -358,7 +360,7 @@ rounddown10(int n)
 }
 
 
-// roundup rounds n up to a number of the form [1eX, 2eX, 5eX].
+/* roundup rounds n up to a number of the form [1eX, 2eX, 5eX]. */
 static int
 roundup(int n)
 {
@@ -402,18 +404,18 @@ runbench(Benchmark *b)
     runbenchn(b, n);
     while (b->status == 0 && b->dur < BenchTime && n < MaxN) {
         int last = n;
-        // Predict iterations/sec.
+        /* Predict iterations/sec. */
         int nsop = b->dur / n;
         if (nsop == 0) {
             n = MaxN;
         } else {
             n = BenchTime / nsop;
         }
-        // Run more iterations than we think we'll need for a second (1.5x).
-        // Don't grow too fast in case we had timing errors previously.
-        // Be sure to run at least one more than last time.
+        /* Run more iterations than we think we'll need for a second (1.5x).
+        Don't grow too fast in case we had timing errors previously.
+        Be sure to run at least one more than last time. */
         n = max(min(n+n/2, 100*last), last+1);
-        // Round up to something easy to read.
+        /* Round up to something easy to read. */
         n = roundup(n);
         runbenchn(b, n);
     }
@@ -503,8 +505,8 @@ readtokens()
     int n = 1;
     char c, *s;
     if ((s = strstr(getenv("MAKEFLAGS"), " --jobserver-fds="))) {
-        rjobfd = (int)strtol(s+17, &s, 10);  // skip " --jobserver-fds="
-        wjobfd = (int)strtol(s+1, NULL, 10); // skip comma
+        rjobfd = (int)strtol(s+17, &s, 10);  /* skip " --jobserver-fds=" */
+        wjobfd = (int)strtol(s+1, NULL, 10); /* skip comma */
     }
     if (rjobfd >= 0) {
         fcntl(rjobfd, F_SETFL, fcntl(rjobfd, F_GETFL)|O_NONBLOCK);
@@ -523,7 +525,7 @@ writetokens(int n)
     if (wjobfd >= 0) {
         fcntl(wjobfd, F_SETFL, fcntl(wjobfd, F_GETFL)|O_NONBLOCK);
         for (; n>1; n--) {
-            write(wjobfd, &c, 1); // ignore error; nothing we can do anyway
+            write(wjobfd, &c, 1); /* ignore error; nothing we can do anyway */
         }
     }
 }
