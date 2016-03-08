@@ -2,15 +2,15 @@
 
 #include "msg.h"
 
-static char *msg = "default message";
+const char *msg = "default message";
 
 void
-set_message(char *m)
+set_message(const char *m)
 {
     msg = m;
 }
 
-char *
+const char *
 get_message(void)
 {
     return msg;

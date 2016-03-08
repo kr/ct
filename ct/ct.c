@@ -53,7 +53,7 @@ nstime()
 #endif
 
 void
-ctlogpn(char *p, int n, char *fmt, ...)
+ctlogpn(const char *p, int n, const char *fmt, ...)
 {
     va_list arg;
 
@@ -118,7 +118,7 @@ ctsetbytes(int n)
 
 
 static void
-die(int code, int err, char *msg)
+die(int code, int err, const char *msg)
 {
     putc('\n', stderr);
 
@@ -499,7 +499,7 @@ report(Test *t)
 }
 
 
-int
+static int
 readtokens()
 {
     int n = 1;
@@ -518,7 +518,7 @@ readtokens()
 }
 
 
-void
+static void
 writetokens(int n)
 {
     char c = '+';
