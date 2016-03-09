@@ -63,6 +63,17 @@ cttestexit()
 }
 
 void
+cttestfail()
+{
+    return; /* remove this line to see multiple failures */
+	ctlog("first");
+	ctfail();
+	ctlog("second");
+	ctfail();
+	ctlog("third");
+}
+
+void
 ctbenchprintf(int n)
 {
     int i;

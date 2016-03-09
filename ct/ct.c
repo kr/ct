@@ -21,6 +21,7 @@
 
 static char *curdir;
 static int rjobfd = -1, wjobfd = -1;
+int fail = 0; /* bool */
 static int64 bstart, bdur;
 static int btiming; /* bool */
 static int64 bbytes;
@@ -67,6 +68,13 @@ ctlogpn(const char *p, int n, const char *fmt, ...)
 
 void
 ctfail(void)
+{
+    fail = 1;
+}
+
+
+void
+ctfailnow(void)
 {
     fflush(stdout);
     fflush(stderr);
@@ -201,6 +209,9 @@ start(Test *t)
         }
         curdir = t->dir;
         t->f();
+        if (fail) {
+            ctfailnow();
+        }
         _exit(0);
     }
     setpgid(t->pid, t->pid);
