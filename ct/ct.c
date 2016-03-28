@@ -85,7 +85,6 @@ ctfailnow(void)
 char *
 ctdir(void)
 {
-    mkdir(curdir, 0700);
     return curdir;
 }
 
@@ -192,7 +191,9 @@ start(Test *t)
 {
     t->fd = tmpfd();
     strcpy(t->dir, TmpDirPat);
-    mktemp(t->dir);
+    if (mkdtemp(t->dir) == NULL) {
+	die(1, errno, "mkdtemp");
+    }
     t->pid = fork();
     if (t->pid < 0) {
         die(1, errno, "fork");
@@ -300,7 +301,9 @@ runbenchn(Benchmark *b, int n)
     int outfd = tmpfd();
     int durfd = tmpfd();
     strcpy(b->dir, TmpDirPat);
-    mktemp(b->dir);
+    if (mkdtemp(b->dir) == NULL) {
+	die(1, errno, "mkdtemp");
+    }
     int pid = fork();
     if (pid < 0) {
         die(1, errno, "fork");
