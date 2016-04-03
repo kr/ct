@@ -76,8 +76,7 @@ ctfail(void)
 void
 ctfailnow(void)
 {
-    fflush(stdout);
-    fflush(stderr);
+    fflush(NULL);
     abort();
 }
 
@@ -194,6 +193,7 @@ start(Test *t)
     if (mkdtemp(t->dir) == NULL) {
 	die(1, errno, "mkdtemp");
     }
+    fflush(NULL);
     t->pid = fork();
     if (t->pid < 0) {
         die(1, errno, "fork");
@@ -213,7 +213,7 @@ start(Test *t)
         if (fail) {
             ctfailnow();
         }
-        _exit(0);
+        exit(0);
     }
     setpgid(t->pid, t->pid);
 }
@@ -304,6 +304,7 @@ runbenchn(Benchmark *b, int n)
     if (mkdtemp(b->dir) == NULL) {
 	die(1, errno, "mkdtemp");
     }
+    fflush(NULL);
     int pid = fork();
     if (pid < 0) {
         die(1, errno, "fork");
@@ -324,7 +325,7 @@ runbenchn(Benchmark *b, int n)
         ctstoptimer();
         write(durfd, &bdur, sizeof bdur);
         write(durfd, &bbytes, sizeof bbytes);
-        _exit(0);
+        exit(0);
     }
     setpgid(pid, pid);
 
