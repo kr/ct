@@ -380,13 +380,15 @@ static int
 roundup(int n)
 {
     int base = rounddown10(n);
-    if (n == base)
-        return n;
+    if (n <= base)
+        return base;
     if (n <= 2*base)
-        return 2 * base;
+        return 2*base;
+    if (n <= 3*base)
+        return 3*base;
     if (n <= 5*base)
-        return 5 * base;
-    return 10 * base;
+        return 5*base;
+    return 10*base;
 }
 
 
@@ -426,10 +428,10 @@ runbench(Benchmark *b)
         } else {
             n = BenchTime / nsop;
         }
-        /* Run more iterations than we think we'll need for a second (1.5x).
+        /* Run more iterations than we think we'll need for a second (1.2x).
         Don't grow too fast in case we had timing errors previously.
         Be sure to run at least one more than last time. */
-        n = max(min(n+n/2, 100*last), last+1);
+        n = max(min(n+n/5, 100*last), last+1);
         /* Round up to something easy to read. */
         n = roundup(n);
         runbenchn(b, n);
