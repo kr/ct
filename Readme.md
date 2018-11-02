@@ -65,9 +65,9 @@ Inspired by [CUT][] 2.1 by Sam Falvo and Billy Tanksley.
 Also with ideas from the [Go testing package][gotesting] and [gotest][].
 Also stole some benchmark hints from [testingbee][] by Dustin Sallings.
 
-[CUT]: http://falvotech.com/content/cut/
-[Makefile]: https://github.com/kr/ct/blob/master/Makefile
-[msg-test.c]: https://github.com/kr/ct/blob/master/msg-test.c
+[CUT]: https://web.archive.org/web/20130318233307/http://falvotech.com/content/cut/
+[Makefile]: https://github.com/kr/ct/blob/main/Makefile
+[msg-test.c]: https://github.com/kr/ct/blob/main/msg-test.c
 [gotesting]: http://golang.org/pkg/testing/
-[gotest]: http://golang.org/cmd/go/#Test_packages
+[gotest]: https://golang.org/cmd/go/#hdr-Test_packages
 [testingbee]: https://github.com/dustin/testingbee
