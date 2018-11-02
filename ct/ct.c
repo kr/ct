@@ -323,8 +323,12 @@ runbenchn(Benchmark *b, int n)
         ctstarttimer();
         b->f(n);
         ctstoptimer();
-        write(durfd, &bdur, sizeof bdur);
-        write(durfd, &bbytes, sizeof bbytes);
+        if (write(durfd, &bdur, sizeof bdur) != sizeof bdur) {
+            die(3, errno, "write");
+        }
+        if (write(durfd, &bbytes, sizeof bbytes) != sizeof bbytes) {
+            die(3, errno, "write");
+        }
         exit(0);
     }
     setpgid(pid, pid);
@@ -542,7 +546,9 @@ writetokens(int n)
     if (wjobfd >= 0) {
         fcntl(wjobfd, F_SETFL, fcntl(wjobfd, F_GETFL)|O_NONBLOCK);
         for (; n>1; n--) {
-            write(wjobfd, &c, 1); /* ignore error; nothing we can do anyway */
+            if (write(wjobfd, &c, 1) != 1) {
+                /* ignore error; nothing we can do anyway */
+            }
         }
     }
 }
