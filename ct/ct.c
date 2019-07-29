@@ -15,6 +15,7 @@
 #include <sys/time.h>
 #include <stdint.h>
 #include <inttypes.h>
+#include <fnmatch.h>
 #include "internal.h"
 #include "ct.h"
 
@@ -25,6 +26,9 @@ int fail = 0; /* bool */
 static int64 bstart, bdur;
 static int btiming; /* bool */
 static int64 bbytes;
+static char *argv0;
+static const char *testpat = "*"; /* match everything by default */
+static const char *benchpat = ""; /* match nothing by default */
 enum { Second = 1000 * 1000 * 1000 };
 enum { BenchTime = Second };
 enum { MaxN = 1000 * 1000 * 1000 };
@@ -217,6 +221,9 @@ runalltest(Test *ts, int limit)
     int nrun = 0;
     Test *t;
     for (t=ts; t->f; t++) {
+        if (fnmatch(testpat, t->name, 0) != 0) {
+            continue;
+        }
         if (nrun >= limit) {
             waittest(ts);
             nrun--;
@@ -466,6 +473,9 @@ static void
 runallbench(Benchmark *b)
 {
     for (; b->f; b++) {
+        if (fnmatch(benchpat, b->name, 0) != 0) {
+            continue;
+        }
         runbench(b);
     }
 }
@@ -546,9 +556,65 @@ writetokens(int n)
 }
 
 
+static void
+usage()
+{
+    fprintf(stderr, "Usage: %s [-test pat] [-bench pat] [-b]\n"
+        "Flags:\n"
+        "    -test pattern\n"
+        "        Run only those tests that match the pattern, using the same\n"
+        "        'glob' rules as the shell uses for file names. Default is to\n"
+        "        run all tests (equivalent to -test '*').\n"
+        "    -bench pattern\n"
+        "        Run only those benchmarks that match the pattern, using the\n"
+        "        same 'glob' rules as the shell uses for file names. Default\n"
+        "        is to run no benchmarks (equivalent to -bench '').\n"
+        "    -b\n"
+        "        Run all benchmarks (equivalent to -bench '*').\n",
+        argv0
+    );
+}
+
+
+#define badflagf(fmt, ...) do {\
+    fprintf(stderr, fmt "\nRun '%s -h' for details.\n", __VA_ARGS__, argv0);\
+    exit(2);\
+} while (0)
+
+
+static void
+parseflags(char **argv)
+{
+    char *flag;
+    while ((flag = *argv++)) {
+        if (strcmp(flag, "-h") == 0) {
+            usage();
+            exit(0);
+        } else if (strcmp(flag, "-test") == 0) {
+            testpat = *argv++;
+            if (!testpat) {
+                badflagf("Flag %s requires an argument.", flag);
+            }
+        } else if (strcmp(flag, "-bench") == 0) {
+            benchpat = *argv++;
+            if (!benchpat) {
+                badflagf("Flag %s requires an argument.", flag);
+            }
+        } else if (strcmp(flag, "-b") == 0) {
+            benchpat = "*";
+        } else {
+            badflagf("Unknown flag: %s", flag);
+        }
+    }
+}
+
+
 int
 main(int argc, char **argv)
 {
+    (void)(argc); /* quiet warning about unused variable */
+    argv0 = *argv++;
+    parseflags(argv);
     int n = readtokens();
     runalltest(ctmaintest, n);
     writetokens(n);
@@ -556,8 +622,6 @@ main(int argc, char **argv)
     if (code != 0) {
         return code;
     }
-    if (argc == 2 && strcmp(argv[1], "-b") == 0) {
-        runallbench(ctmainbench);
-    }
+    runallbench(ctmainbench);
     return 0;
 }
