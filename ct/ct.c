@@ -172,14 +172,6 @@ waittest(Test *ts)
     for (t=ts; t->f; t++) {
         if (t->pid == pid) {
             t->status = stat;
-            if (!t->status) {
-                putchar('.');
-            } else if (failed(t->status)) {
-                putchar('F');
-            } else {
-                putchar('E');
-            }
-            fflush(stdout);
         }
     }
 }
@@ -484,7 +476,6 @@ report(Test *t)
 {
     int nfail = 0, nerr = 0;
 
-    putchar('\n');
     for (; t->f; t++) {
         rmtree(t->dir);
         if (!t->status) {
@@ -513,8 +504,6 @@ report(Test *t)
 
     if (nfail || nerr) {
         printf("\n%d failures; %d errors.\n", nfail, nerr);
-    } else {
-        printf("\nPASS\n");
     }
     return nfail || nerr;
 }
