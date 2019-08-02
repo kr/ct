@@ -29,6 +29,7 @@ static int64 bbytes;
 static char *argv0;
 static const char *testpat = "*"; /* match everything by default */
 static const char *benchpat = ""; /* match nothing by default */
+static uint64_t count = 1;
 enum { Second = 1000 * 1000 * 1000 };
 enum { BenchTime = Second };
 enum { MaxN = 1000 * 1000 * 1000 };
@@ -476,7 +477,10 @@ runallbench(Benchmark *b)
         if (fnmatch(benchpat, b->name, 0) != 0) {
             continue;
         }
-        runbench(b);
+        uint64_t runs = 0;
+        while (runs++ < count) {
+            runbench(b);
+        }
     }
 }
 
@@ -559,7 +563,7 @@ writetokens(int n)
 static void
 usage()
 {
-    fprintf(stderr, "Usage: %s [-test pat] [-bench pat] [-b]\n"
+    fprintf(stderr, "Usage: %s [-test pat] [-bench pat] [-b] [-count n]\n"
         "Flags:\n"
         "    -test pattern\n"
         "        Run only those tests that match the pattern, using the same\n"
@@ -570,7 +574,9 @@ usage()
         "        same 'glob' rules as the shell uses for file names. Default\n"
         "        is to run no benchmarks (equivalent to -bench '').\n"
         "    -b\n"
-        "        Run all benchmarks (equivalent to -bench '*').\n",
+        "        Run all benchmarks (equivalent to -bench '*').\n"
+        "    -count n\n"
+        "        Run each benchmark n times (default 1).\n",
         argv0
     );
 }
@@ -602,6 +608,12 @@ parseflags(char **argv)
             }
         } else if (strcmp(flag, "-b") == 0) {
             benchpat = "*";
+        } else if (strcmp(flag, "-count") == 0) {
+            char *cstr = *argv++;
+            uint64_t c = strtoul(cstr, NULL, 10);
+            if (errno)
+                badflagf("Cannot parse %s as count parameter", cstr);
+            count = c;
         } else {
             badflagf("Unknown flag: %s", flag);
         }
