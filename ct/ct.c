@@ -418,7 +418,8 @@ max(int a, int b)
 static void
 runbench(Benchmark *b)
 {
-    printf("%s\t", b->name);
+    // Add the prefix to make it work with benchstat.
+    printf("Benchmark%s\t", b->name+8);
     fflush(stdout);
     int n = 1;
     runbenchn(b, n);
